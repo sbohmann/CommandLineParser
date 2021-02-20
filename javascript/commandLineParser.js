@@ -2,6 +2,9 @@ export default function CommandLineParser() {
     let keyForName = new Map()
 
     function addKey(argumentName, optional, expectsValue, conversion) {
+        if (!argumentName.match(/\w+/)) {
+            throw new RangeError("Illegal argument name [" + argumentName + "]")
+        }
         if (keyForName.has(argumentName)) {
             throw new Error("Double argument name [" + argumentName + "]")
         }
@@ -12,13 +15,14 @@ export default function CommandLineParser() {
             expectsValue,
             parseValue(text) {
                 if (conversion) {
-                    return conversion(text)
+                    return conversion(text, argumentName)
                 } else {
                     return text
                 }
             }
         }
         keyForName.set(argumentName, key)
+        return key
     }
 
     function parse(args) {
@@ -35,11 +39,15 @@ export default function CommandLineParser() {
                 if (!match) {
                     throw new Error("Illegal argument: [" + argument + "]")
                 }
-            let argumentName = match[1]
+                let argumentName = match[1]
                 if (argumentNamesEncountered.has(argumentName)) {
                     throw new Error("Double argument: [" + argument + "]")
                 }
+                argumentNamesEncountered.add(argumentName)
                 let key = keyForName.get(argumentName)
+                if (!key) {
+                    throw new Error("Undefined argument: [" + argument + "]")
+                }
                 if (key.expectsValue) {
                     expectingValueForKey = key
                 } else {
@@ -98,8 +106,8 @@ export default function CommandLineParser() {
     }
 }
 
-function int(text) {
-    let result = number(text)
+function int(text, argumentName) {
+    let result = number(text, argumentName)
     if (result !== Math.floor(result)) {
         valueError("Not an integer number: [" + text + "]")
     }
@@ -118,7 +126,7 @@ function boolean(text, argumentName) {
     switch (text) {
         case "true":
             return true
-        case "false:":
+        case "false":
             return false
         default:
             valueError(argumentName, "Not a boolean expression: [" + text + "], " +
@@ -127,5 +135,5 @@ function boolean(text, argumentName) {
 }
 
 function valueError(argumentName, errorMessage) {
-    throw new Error("Illegal value for argument -" + argumentName + "]: " + errorMessage)
+    throw new Error("Illegal value for argument -" + argumentName + ": " + errorMessage)
 }
