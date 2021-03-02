@@ -1,7 +1,7 @@
 export default function CommandLineParser() {
     let keyForName = new Map()
 
-    function addKey(argumentName, optional, expectsValue, conversion) {
+    function addKey(argumentName, optional, expectsValue, conversion, defaultValue) {
         if (!argumentName.match(/\w+/)) {
             throw new RangeError("Illegal argument name [" + argumentName + "]")
         }
@@ -13,6 +13,7 @@ export default function CommandLineParser() {
             argumentName,
             optional,
             expectsValue,
+            defaultValue,
             parseValue(text) {
                 if (conversion) {
                     return conversion(text, argumentName)
@@ -51,7 +52,7 @@ export default function CommandLineParser() {
                 if (key.expectsValue) {
                     expectingValueForKey = key
                 } else {
-                    result.set(key.name, true)
+                    result.set(key.argumentName, true)
                 }
             }
         })
@@ -69,14 +70,21 @@ export default function CommandLineParser() {
                     throw new Error("Attempt to use key created by another parser instance. " +
                         "Key argument name: [" + key.argumentName + "]")
                 }
-                return result.get(key.argumentName)
+                let value = result.get(key.argumentName)
+                if (value !== undefined) {
+                    return value
+                } else if (key.defaultValue !== undefined) {
+                    return key.defaultValue
+                } else {
+                    return undefined
+                }
             }
         }
     }
 
     return {
         option(argumentName) {
-            return addKey(argumentName, true, false)
+            return addKey(argumentName, true, false, null, false)
         },
         string(argumentName) {
             return addKey(argumentName, false, true)
