@@ -27,13 +27,13 @@ export default function CommandLineParser() {
     }
 
     function parse(args) {
-        let result = new Map()
+        let valueForArgumentName = new Map()
         let argumentNamesEncountered = new Set()
         let expectingValueForKey = null
         args.forEach(argument => {
             if (expectingValueForKey) {
                 let key = expectingValueForKey
-                result.set(key.name, key.parseValue(argument))
+                valueForArgumentName.set(key.argumentName, key.parseValue(argument))
                 expectingValueForKey = null
             } else {
                 let match = argument.match(/-(\w+)/)
@@ -52,7 +52,7 @@ export default function CommandLineParser() {
                 if (key.expectsValue) {
                     expectingValueForKey = key
                 } else {
-                    result.set(key.argumentName, true)
+                    valueForArgumentName.set(key.argumentName, true)
                 }
             }
         })
@@ -70,7 +70,7 @@ export default function CommandLineParser() {
                     throw new Error("Attempt to use key created by another parser instance. " +
                         "Key argument name: [" + key.argumentName + "]")
                 }
-                let value = result.get(key.argumentName)
+                let value = valueForArgumentName.get(key.argumentName)
                 if (value !== undefined) {
                     return value
                 } else if (key.defaultValue !== undefined) {
