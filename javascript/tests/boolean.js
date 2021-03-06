@@ -1,54 +1,6 @@
-import CommandLineParser from "./commandLineParser.js"
+import CommandLineParser from "../commandLineParser.js"
 import assert from "assert"
-
-function assertThrows(code, expectedTextPart) {
-    try {
-        code()
-    } catch (error) {
-        if (expectedTextPart) {
-            assert(error.message.includes(expectedTextPart),
-                "Call did throw but error message [" + error.message +
-                "] does not contain the expected text part [" + expectedTextPart + "]")
-        }
-        return
-    }
-    throw new Error("Call did not throw.")
-}
-
-describe("No parameters", () => {
-    let commandLineParser = CommandLineParser()
-
-    it("No arguments", () => {
-        commandLineParser.parse([])
-    })
-    it("Undefined argument", () => {
-        assertThrows(() => commandLineParser.parse(["-a"]), "Undefined argument")
-    })
-    it("Missing dash", () => {
-        assertThrows(() => commandLineParser.parse(["a"]), "Illegal argument")
-    })
-    it("Dangling value", () => {
-        assertThrows(() => commandLineParser.parse(["1"]), "Illegal argument")
-    })
-})
-
-describe("Single option", () => {
-    let commandLineParser = CommandLineParser()
-    let key = commandLineParser.option("option")
-
-    it("No arguments", () => {
-        assert.equal(commandLineParser.parse([]).get(key), false)
-    })
-    it("Option argument", () => {
-        assert.equal(commandLineParser.parse(["-option"]).get(key), true)
-    })
-    it("Missing dash", () => {
-        assertThrows(() => commandLineParser.parse(["option"]), "Illegal argument")
-    })
-    it("Dangling value", () => {
-        assertThrows(() => commandLineParser.parse(["1"]), "Illegal argument")
-    })
-})
+import {assertThrows} from "./assertions.js"
 
 describe("Single boolean", () => {
     let commandLineParser = CommandLineParser()

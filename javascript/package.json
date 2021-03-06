@@ -4,7 +4,7 @@
   "description": "",
   "main": "example.js",
   "scripts": {
-    "test": "mocha commandLineParserTest.js"
+    "test": "mocha tests/empty.js tests/option.js tests/boolean.js tests/number.js"
   },
   "author": "",
   "license": "ISC",
