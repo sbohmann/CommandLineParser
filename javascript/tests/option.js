@@ -7,10 +7,10 @@ describe("Single option", () => {
     let key = commandLineParser.option("option")
 
     it("No arguments", () => {
-        assert.equal(commandLineParser.parse([]).get(key), false)
+        assert.strictEqual(commandLineParser.parse([]).get(key), false)
     })
     it("Option argument", () => {
-        assert.equal(commandLineParser.parse(["-option"]).get(key), true)
+        assert.strictEqual(commandLineParser.parse(["-option"]).get(key), true)
     })
     it("Missing dash", () => {
         assertThrows(() => commandLineParser.parse(["option"]), "Illegal argument")

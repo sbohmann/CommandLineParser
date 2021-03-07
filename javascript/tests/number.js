@@ -18,7 +18,7 @@ describe("Single optional number", () => {
     let key = commandLineParser.optionalNumber("number")
 
     it("No arguments", () => {
-        assert.equal(commandLineParser.parse([]).get(key), undefined)
+        assert.strictEqual(commandLineParser.parse([]).get(key), undefined)
     })
 
     commonSingleNumberTests(commandLineParser, key)
@@ -26,16 +26,16 @@ describe("Single optional number", () => {
 
 function commonSingleNumberTests(commandLineParser, key) {
     it("125.34 value", () => {
-        assert(commandLineParser.parse(["-number", "125.34"]).get(key) === 125.34)
+        assert.strictEqual(commandLineParser.parse(["-number", "125.34"]).get(key) ,  125.34)
     })
     it("0 value", () => {
-        assert(commandLineParser.parse(["-number", "0"]).get(key) === 0)
+        assert.strictEqual(commandLineParser.parse(["-number", "0"]).get(key) ,  0)
     })
     it("-0 value", () => {
-        assert(commandLineParser.parse(["-number", "-0"]).get(key) === 0)
+        assert.strictEqual(commandLineParser.parse(["-number", "-0"]).get(key) ,  -0)
     })
     it("-125.34 value", () => {
-        assert(commandLineParser.parse(["-number", "-125.34"]).get(key) === -125.34)
+        assert.strictEqual(commandLineParser.parse(["-number", "-125.34"]).get(key) ,  -125.34)
     })
     it("Illegal value", () => {
         assertThrows(() => commandLineParser.parse(["-number", "x"]), "Illegal value")

@@ -18,7 +18,7 @@ describe("Single optional string", () => {
     let key = commandLineParser.optionalString("string")
 
     it("No arguments", () => {
-        assert.equal(commandLineParser.parse([]).get(key), undefined)
+        assert.strictEqual(commandLineParser.parse([]).get(key), undefined)
     })
 
     commonSingleStringTests(commandLineParser, key)
@@ -26,22 +26,22 @@ describe("Single optional string", () => {
 
 function commonSingleStringTests(commandLineParser, key) {
     it("text value", () => {
-        assert(commandLineParser.parse(["-string", "text"]).get(key) === "text")
+        assert.strictEqual(commandLineParser.parse(["-string", "text"]).get(key) ,  "text")
     })
     it("x value", () => {
-        assert(commandLineParser.parse(["-string", "x"]).get(key) === "x")
+        assert.strictEqual(commandLineParser.parse(["-string", "x"]).get(key) ,  "x")
     })
     it("empty value", () => {
-        assert(commandLineParser.parse(["-string", ""]).get(key) === "")
+        assert.strictEqual(commandLineParser.parse(["-string", ""]).get(key) ,  "")
     })
     it("blank value", () => {
-        assert(commandLineParser.parse(["-string", "   "]).get(key) === "   ")
+        assert.strictEqual(commandLineParser.parse(["-string", "   "]).get(key) ,  "   ")
     })
     it("multi word value", () => {
-        assert(commandLineParser.parse(["-string", "first second"]).get(key) === "first second")
+        assert.strictEqual(commandLineParser.parse(["-string", "first second"]).get(key) ,  "first second")
     })
     it("emoji value", () => {
-        assert(commandLineParser.parse(["-string", "😎"]).get(key) === "😎")
+        assert.strictEqual(commandLineParser.parse(["-string", "😎"]).get(key) ,  "😎")
     })
     it("Missing value", () => {
         assertThrows(() => commandLineParser.parse(["-string"]), "No value given")
