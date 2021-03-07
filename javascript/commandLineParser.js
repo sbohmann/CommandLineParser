@@ -30,6 +30,7 @@ export default function CommandLineParser() {
         let valueForArgumentName = new Map()
         let argumentNamesEncountered = new Set()
         let expectingValueForKey = null
+
         args.forEach(argument => {
             if (expectingValueForKey) {
                 let key = expectingValueForKey
@@ -56,14 +57,17 @@ export default function CommandLineParser() {
                 }
             }
         })
+
         if (expectingValueForKey) {
             throw new Error("No value given for argument [-" + expectingValueForKey.name + "]")
         }
+
         keyForName.forEach(key => {
             if (!key.optional && !argumentNamesEncountered.has(key.argumentName)) {
                 throw new Error("Missing argument [-" + key.argumentName + "]")
             }
         })
+
         return {
             get(key) {
                 if (key.mapInstance !== keyForName) {
@@ -93,55 +97,55 @@ export default function CommandLineParser() {
             return addKey(argumentName, true, true)
         },
         int(argumentName) {
-            return addKey(argumentName, false, true, int)
+            return addKey(argumentName, false, true, parseIntValue)
         },
         optionalInt(argumentName) {
-            return addKey(argumentName, true, true, int)
+            return addKey(argumentName, true, true, parseIntValue)
         },
         number(argumentName) {
-            return addKey(argumentName, false, true, number)
+            return addKey(argumentName, false, true, parseNumberValue)
         },
         optionalNumber(argumentName) {
-            return addKey(argumentName, true, true, number)
+            return addKey(argumentName, true, true, parseNumberValue)
         },
         boolean(argumentName) {
-            return addKey(argumentName, false, true, boolean)
+            return addKey(argumentName, false, true, parseBooleanValue)
         },
         optionalBoolean(argumentName) {
-            return addKey(argumentName, true, true, boolean)
+            return addKey(argumentName, true, true, parseBooleanValue)
         },
         parse
     }
 }
 
-function int(text, argumentName) {
-    let result = number(text, argumentName)
+function parseIntValue(text, argumentName) {
+    let result = parseNumberValue(text, argumentName)
     if (result !== Math.floor(result)) {
-        valueError("Not an integer number: [" + text + "]")
+        illegalValueError("Not an integer number: [" + text + "]")
     }
     return result
 }
 
-function number(text, argumentName) {
+function parseNumberValue(text, argumentName) {
     let result = Number(text)
     if (Number.isNaN(result)) {
-        valueError(argumentName, "not a number: [" + text + "]")
+        illegalValueError(argumentName, "not a number: [" + text + "]")
     }
     return result
 }
 
-function boolean(text, argumentName) {
+function parseBooleanValue(text, argumentName) {
     switch (text) {
         case "true":
             return true
         case "false":
             return false
         default:
-            valueError(argumentName, "Not a boolean expression: [" + text + "], " +
+            illegalValueError(argumentName, "Not a boolean expression: [" + text + "], " +
                 "expected values: true or false")
     }
 }
 
-function valueError(argumentName, errorMessage) {
+function illegalValueError(argumentName, errorMessage) {
     throw new Error("Illegal value for argument -" + argumentName + ": " + errorMessage)
 }
