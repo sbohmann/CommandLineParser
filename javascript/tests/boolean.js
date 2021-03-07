@@ -9,13 +9,8 @@ describe("Single boolean", () => {
     it("No arguments", () => {
         assertThrows(() => commandLineParser.parse([]), "Missing argument")
     })
-    it("True value", () => {
-        assert(commandLineParser.parse(["-boolean", "true"]).get(key) === true)
-    })
-    it("False value", () => {
-        assert(commandLineParser.parse(["-boolean", "false"]).get(key) === false)
-    })
-    commonSingleBooleanTests(commandLineParser)
+
+    commonSingleBooleanTests(commandLineParser, key)
 })
 
 describe("Single optional boolean", () => {
@@ -23,18 +18,19 @@ describe("Single optional boolean", () => {
     let key = commandLineParser.optionalBoolean("boolean")
 
     it("No arguments", () => {
-        assert.equal(commandLineParser.parse([]).get(key), null)
+        assert.equal(commandLineParser.parse([]).get(key), undefined)
     })
+
+    commonSingleBooleanTests(commandLineParser, key)
+})
+
+function commonSingleBooleanTests(commandLineParser, key) {
     it("True value", () => {
         assert(commandLineParser.parse(["-boolean", "true"]).get(key) === true)
     })
-    it("True value", () => {
+    it("False value", () => {
         assert(commandLineParser.parse(["-boolean", "false"]).get(key) === false)
     })
-    commonSingleBooleanTests(commandLineParser)
-})
-
-function commonSingleBooleanTests(commandLineParser) {
     it("Illegal value", () => {
         assertThrows(() => commandLineParser.parse(["-boolean", "123"]), "Illegal value")
     })

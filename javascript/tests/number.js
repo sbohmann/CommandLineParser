@@ -9,42 +9,44 @@ describe("Single number", () => {
     it("No arguments", () => {
         assertThrows(() => commandLineParser.parse([]), "Missing argument")
     })
-    it("True value", () => {
-        assert(commandLineParser.parse(["-number", "true"]).get(key) === true)
-    })
-    it("False value", () => {
-        assert(commandLineParser.parse(["-number", "false"]).get(key) === false)
-    })
-    commonSingleBooleanTests(commandLineParser)
+
+    commonSingleNumberTests(commandLineParser, key)
 })
 
 describe("Single optional number", () => {
     let commandLineParser = CommandLineParser()
-    let key = commandLineParser.optionalBoolean("number")
+    let key = commandLineParser.optionalNumber("number")
 
     it("No arguments", () => {
-        assert.equal(commandLineParser.parse([]).get(key), null)
+        assert.equal(commandLineParser.parse([]).get(key), undefined)
     })
-    it("True value", () => {
-        assert(commandLineParser.parse(["-number", "true"]).get(key) === true)
-    })
-    it("True value", () => {
-        assert(commandLineParser.parse(["-number", "false"]).get(key) === false)
-    })
-    commonSingleBooleanTests(commandLineParser)
+
+    commonSingleNumberTests(commandLineParser, key)
 })
 
-function commonSingleBooleanTests(commandLineParser) {
+function commonSingleNumberTests(commandLineParser, key) {
+    it("125.34 value", () => {
+        assert(commandLineParser.parse(["-number", "125.34"]).get(key) === 125.34)
+    })
+    it("0 value", () => {
+        assert(commandLineParser.parse(["-number", "0"]).get(key) === 0)
+    })
+    it("-0 value", () => {
+        assert(commandLineParser.parse(["-number", "-0"]).get(key) === 0)
+    })
+    it("-125.34 value", () => {
+        assert(commandLineParser.parse(["-number", "-125.34"]).get(key) === -125.34)
+    })
     it("Illegal value", () => {
-        assertThrows(() => commandLineParser.parse(["-number", "123"]), "Illegal value")
+        assertThrows(() => commandLineParser.parse(["-number", "x"]), "Illegal value")
     })
     it("Missing value", () => {
         assertThrows(() => commandLineParser.parse(["-number"]), "No value given")
     })
     it("Missing dash", () => {
-        assertThrows(() => commandLineParser.parse(["number", "true"]), "Illegal argument")
+        assertThrows(() => commandLineParser.parse(["number", "12.5"]), "Illegal argument")
     })
     it("Dangling value", () => {
-        assertThrows(() => commandLineParser.parse(["1", "true"]), "Illegal argument")
+        assertThrows(() => commandLineParser.parse(["1", "12.5"]), "Illegal argument")
     })
 }

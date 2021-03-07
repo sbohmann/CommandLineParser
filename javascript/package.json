@@ -4,7 +4,7 @@
   "description": "",
   "main": "example.js",
   "scripts": {
-    "test": "mocha tests/empty.js tests/option.js tests/boolean.js tests/number.js"
+    "test": "mocha tests/empty.js tests/option.js tests/boolean.js tests/number.js tests/int.js tests/string.js"
   },
   "author": "",
   "license": "ISC",
